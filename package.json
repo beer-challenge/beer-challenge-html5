@@ -8,10 +8,15 @@
     "url": "http://"
   },
   "dependencies": {
-    "express": "*"
-    },
-  "devDependencies": {
     
+  },
+  "devDependencies": {
+    "gulp-util": "~2.2.14",
+    "gulp": "~3.5.2",
+    "gulp-connect": "~0.4.0",
+    "gulp-livereload": "~1.1.1",
+    "gulp-watch": "~0.5.0",
+    "gulp-less": "~1.2.1"
   },
   "engines": {
     "node": "0.10.x"
