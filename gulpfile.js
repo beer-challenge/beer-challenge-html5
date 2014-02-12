@@ -36,7 +36,6 @@ gulp.task('vendor', function () {
 
 gulp.task('less', function() {
   gulp.src(options.src + 'less/*.less')
-    //.pipe(watch())
     .pipe(less())
     .pipe(gulp.dest(options.out + 'css'))
     .pipe(connect.reload());
