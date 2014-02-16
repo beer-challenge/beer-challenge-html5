@@ -7,7 +7,9 @@
     "type": "git",
     "url": "http://"
   },
-  "dependencies": {},
+  "dependencies": {
+    "express": "*"
+  },
   "devDependencies": {
     "gulp-util": "~2.2.14",
     "gulp": "~3.5.2",

@@ -6,7 +6,7 @@ var fs = require('fs');
 // Create a service (the app object is just a callback).
 var app = express();
 
-app.use(express.static(__dirname + '/'));
+app.use(express.static(__dirname + '/out'));
 
 // Create an HTTP service.
 
