@@ -20,16 +20,21 @@ App.Audio = (function(){
     audioConstraints = {
         audio: true,
         video: false
-    },
+    };
 
     Audio.record = function(){
         navigator.getMedia(audioConstraints, function(stream) {
             App.timer.start();
+
             audioStream = stream;
+
+            console.log("stream:", stream);
+
             source = audioContext.createBufferSource();
             analyser = audioContext.createAnalyser();
             analyser.fftSize = 1024;
             freqByteData = new Uint8Array(analyser.frequencyBinCount);
+
             microphone = audioContext.createMediaStreamSource(stream);
             microphone.connect(analyser);
 
@@ -49,6 +54,7 @@ App.Audio = (function(){
         analyser.getByteFrequencyData(freqByteData);
 
         var length = freqByteData.length;
+
         var sum = 0;
         for(var j = 0; j < length; ++j) {
             sum += freqByteData[j];

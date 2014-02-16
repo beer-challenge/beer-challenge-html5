@@ -4,16 +4,8 @@ window.App = (function(){
     var App = {};
 
     window.onerror = function(msg, url, line) {
-       // You can view the information in an alert to see things working
-       // like so:
        alert("Error: " + msg + "\nurl: " + url + "\nline #: " + line);
-
-       // TODO: Report this error via ajax so you can keep track
-       //       of what pages have JS issues
-
        var suppressErrorAlert = false;
-       // If you return true, then error alerts (like in older versions of 
-       // Internet Explorer) will be suppressed.
        return suppressErrorAlert;
     };
 
@@ -82,11 +74,13 @@ window.App = (function(){
     })
     .assign($("#timer-toggle-btn"), "css", "display");
 
+    /*
     $("#log-btn")
     .asEventStream("click")
     .subscribe(function(){
         $('#log').addClass("animated slideInDown"); //.removeClass("display-none")
     });
+    */
 
     return App;
 }).call(this);
