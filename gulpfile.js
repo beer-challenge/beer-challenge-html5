@@ -20,7 +20,7 @@ var options = {
       devel: true,
       jquery: true,
       strict: true,
-      predef: ["Bacon", "_", 'App']
+      predef: ["Bacon", "_", 'onmessage', 'postMessage', 'App']
     }
 };
 
@@ -67,7 +67,7 @@ gulp.task('less', function() {
 gulp.task('watch', function () {
   gulp.watch([options.src + '*.html'], ['html']);
   gulp.watch([options.src + 'less/*.less'], ['less']);
-  gulp.watch([options.src + 'js/**/*.js'], ['lint', 'js']);
+  gulp.watch([options.src + 'js/**/*.js'], ['js']);
 });
 
-gulp.task('default', ['connect', 'vendor', 'lint', 'js', 'less', 'html', 'watch']);
+gulp.task('default', ['connect', 'vendor', 'js', 'less', 'html', 'watch']);

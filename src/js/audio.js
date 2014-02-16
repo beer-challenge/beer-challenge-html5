@@ -1,14 +1,14 @@
-App.AudioApi = (function(){
+App.Audio = (function(){
     "use strict";
 
-    var AudioApi = {};
+    var Audio = {};
 
     navigator.getMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
 
     var audioContext = new window.webkitAudioContext(),
 
-    beatCutOff = 20,
-    BEAT_HOLD_TIME = 60, //num of frames to hold a beat
+    beatCutOff = 0,
+    BEAT_HOLD_TIME = 20, //num of frames to hold a beat
     BEAT_DECAY_RATE = 0.97,
     BEAT_MIN = 0.6, //level less than this is no beat
     recorder, source, analyser, microphone, intervalId, freqByteData, audioStream,
@@ -21,7 +21,7 @@ App.AudioApi = (function(){
     volSens = 4.0,
     beatTime = 30; //avoid auto beat at start
 
-    AudioApi.record = function(){
+    Audio.record = function(){
         navigator.getMedia(audioConstraints, function(stream) {
             App.timer.start();
 
@@ -37,17 +37,31 @@ App.AudioApi = (function(){
             microphone = audioContext.createMediaStreamSource(stream);
             microphone.connect(analyser);
 
-            intervalId = window.setInterval(updateAudio, 150);
+            intervalId = window.setInterval(updateAudio, 50);
         }, function() {
             console.log("error:", arguments);
         });
     };
 
-    var stopRecording = function(){
+    Audio.stopRecording = function(){
         App.timer.stop();
         audioStream.stop();
         window.clearInterval(intervalId);
     };
+
+    /*
+    var foo = function(){
+        var myWorker = new Worker("js/worker.js");
+
+        myWorker.addEventListener("message", function (oEvent) {
+          console.log("Called back by the worker!" + oEvent.data);
+        }, false);
+        
+
+        analyser.getByteFrequencyData(freqByteData);
+        myWorker.postMessage(freqByteData); 
+    };
+    */
 
     var updateAudio = function(){
         analyser.getByteFrequencyData(freqByteData);
@@ -67,10 +81,14 @@ App.AudioApi = (function(){
         if(normLevel > maxLevel){
             maxLevel = normLevel;
         }
-        console.log("max:", maxLevel, "norm:", normLevel);
+        //console.log("max:", maxLevel, "norm:", normLevel);
 
-        if(maxLevel > 1.5){
-            stopRecording();
+        var now = new Date().getTime();
+        var diff = now - App.Accelerometer.status();
+
+        if(beatCutOff > 0.5 && diff < 50){
+            console.log("audio", beatCutOff, "diff:", diff);
+            Audio.stopRecording();
         }
 
         //BEAT DETECTION
@@ -88,5 +106,9 @@ App.AudioApi = (function(){
         }
     };
 
-    return AudioApi;
+    Audio.getCurrentLevel = function(){
+        return beatCutOff;
+    };
+
+    return Audio;
 }).call(this);
