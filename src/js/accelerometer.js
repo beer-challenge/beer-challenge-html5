@@ -13,7 +13,6 @@ App.Accelerometer = (function(){
         */
 
         _hitStatus = new Date().getTime();
-        console.log("shake: " + App.Audio.getCurrentLevel());
     };
 
     var throttledHandleOrientation = _.throttle(handleOrientation, 10);
