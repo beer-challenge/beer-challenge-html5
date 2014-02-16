@@ -1,5 +1,23 @@
-//(function(){
-    var timer = {
+window.App = (function(){
+    "use strict";
+
+    var App = {};
+
+    window.onerror = function(msg, url, line) {
+       // You can view the information in an alert to see things working
+       // like so:
+       alert("Error: " + msg + "\nurl: " + url + "\nline #: " + line);
+
+       // TODO: Report this error via ajax so you can keep track
+       //       of what pages have JS issues
+
+       var suppressErrorAlert = false;
+       // If you return true, then error alerts (like in older versions of 
+       // Internet Explorer) will be suppressed.
+       return suppressErrorAlert;
+    };
+
+    App.timer = {
         _startTime: null,
         _intervalId: null,
         _model: null,
@@ -14,15 +32,15 @@
         },
 
         updateModel: function(){
-            _model.set(this.elapsed());
+            this._model.set(this.elapsed());
         },
 
         start: function(){
-            _model = Bacon.Model();
+            this._model = Bacon.Model();
 
-            _model.changes()
+            this._model.changes()
             .map(function(val) {
-                return (Math.floor(val/100) * 0.1).toFixed(1)
+                return (Math.floor(val/100) * 0.1).toFixed(1);
             })
             .assign($("#timer-output"), "text");
 
@@ -40,7 +58,7 @@
             return this._isRunning;
         }
     };
-    _.bindAll(timer);
+    _.bindAll(App.timer);
 
     var foo = console.log;
     console.log = function(){
@@ -50,7 +68,7 @@
         });
         $('#log').html(txt + "\n");
         foo.apply(console, arguments);
-    }
+    };
 
     var handleOrientation = function(event) {
         var x = event.beta;  // In degree in the range [-180,180]
@@ -59,61 +77,22 @@
         console.log( "beta : " + x + "---" + y +" \n");
     };
     var throttledHandleOrientation = _.throttle(handleOrientation, 50);
-    window.addEventListener('deviceorientation', throttledHandleOrientation);
-
-    //var recordRTC = RecordRTC(mediaStream);
-    
-
-    var recorder;
-    var record = function(){
-        var audioStream;
-    
-        if (!audioStream){
-            var audioConstraints = {
-                audio: true,
-                video: false
-            };
-            navigator.getUserMedia(audioConstraints, function(stream) {
-                console.log("stream:", stream);
-                
-                if (window.IsChrome) stream = new window.MediaStream(stream.getAudioTracks());
-                audioStream = stream;
-
-                audio.src = URL.createObjectURL(audioStream);
-                audio.play();
-
-                // "audio" is a default type
-                recorder = window.RecordRTC(stream, {
-                    type: 'audio'
-                });
-                recorder.startRecording();
-            }, function() {});
-        }
-        else {
-            audio.src = URL.createObjectURL(audioStream);
-            audio.play();
-            if (recorder) recorder.startRecording();
-        }
-    };
+    //window.addEventListener('deviceorientation', throttledHandleOrientation);   
 
     $("#timer-toggle-btn")
     .asEventStream("click")
     .map(function(event) {
-        if(timer.isRunning()){
-            timer.stop();
-            recorder.stopRecording(function(audioURL) {
-                var mediaElement = $('#audio')[0];
-                mediaElement.src = audioURL;
-            });
+        if(App.timer.isRunning()){
+            App.timer.stop();
+            
         }
         else{
-            timer.start();
-            record();
+            App.AudioApi.record();
         }
-        console.log("timer is running:", timer.isRunning());
-        return timer.isRunning()? 'Stop': 'Start';
+        console.log("timer is running:", App.timer.isRunning());
+        return App.timer.isRunning()? 'Stop': 'Start';
     })
-    .assign($("#timer-toggle-btn"), "text")
+    .assign($("#timer-toggle-btn"), "text");
 
     $("#log-btn")
     .asEventStream("click")
@@ -122,4 +101,5 @@
         $('#log').addClass("animated slideInDown"); //.removeClass("display-none")
     });
 
-//}).call(this);
+    return App;
+}).call(this);

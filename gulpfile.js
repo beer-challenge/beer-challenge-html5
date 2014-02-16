@@ -1,11 +1,27 @@
 var gulp = require('gulp'),
     less = require('gulp-less'),
     watch = require('gulp-watch'),
-    connect = require('gulp-connect');
+    connect = require('gulp-connect'),
+    jshint = require('gulp-jshint'),
+    stylish = require('jshint-stylish');
 
 var options = {
     out: "./out/",
-    src: "./src/"
+    src: "./src/",
+    jshint:  {
+      browser: true,
+      curly: true,
+      eqeqeq: true,
+      immed: false,
+      latedef: true,
+      newcap: true,
+      noarg: true,
+      undef: true,
+      devel: true,
+      jquery: true,
+      strict: true,
+      predef: ["Bacon", "_", 'App']
+    }
 };
 
 gulp.task('connect', connect.server({
@@ -16,6 +32,13 @@ gulp.task('connect', connect.server({
   //  browser: 'chrome' // if not working OS X browser: 'Google Chrome'
   //}
 }));
+
+gulp.task('lint', function() {
+  gulp.src(options.src + 'js/**/*.js')
+  .pipe(jshint(options.jshint))
+  .pipe(jshint.reporter('jshint-stylish'))
+  .pipe(jshint.reporter('fail'))
+});
 
 gulp.task('html', function () {
   gulp.src(options.src + '*.html')
@@ -44,7 +67,7 @@ gulp.task('less', function() {
 gulp.task('watch', function () {
   gulp.watch([options.src + '*.html'], ['html']);
   gulp.watch([options.src + 'less/*.less'], ['less']);
-  gulp.watch([options.src + 'js/**/*.js'], ['js']);
+  gulp.watch([options.src + 'js/**/*.js'], ['lint', 'js']);
 });
 
-gulp.task('default', ['connect', 'vendor', 'js', 'less', 'html', 'watch']);
+gulp.task('default', ['connect', 'vendor', 'lint', 'js', 'less', 'html', 'watch']);
