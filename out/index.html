@@ -3,46 +3,59 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Beer timer</title>
+    <title>The Beer Challange</title>
   
     <link href="vendor/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="vendor/animate.css/animate.css" rel="stylesheet">
-    <link href="css/template.css" rel="stylesheet">
+    <!-- <link href="vendor/animate.css/animate.css" rel="stylesheet"> -->
+    <!-- <link href="css/template.css" rel="stylesheet"> -->
     <link href="css/main.css" rel="stylesheet">
-    
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
   </head>
 
   <body>
 
     <div class="site-wrapper">
 
-      <div class="site-wrapper-inner">
-
-        <div class="cover-container">
-
-          <div class="inner cover">
-            <h1 class="cover-heading">Beer Timer</h1>
-            <p class="lead">foobar</p>
-            <p class="lead">
-              <a href="#" id="timer-toggle-btn" class="btn btn-lg btn-default">Start</a>
-            </p>
-          </div>
-
-           <h2 id="timer-output"></h2>
-
-           <!--<button id="log-btn" class="btn">log</button>-->
-           <div id="log" class=""></div>
-        </div>
+      <div class="logo">
+        <div class="top">The</div>
+        <div class="middle">Beer</div>
+        <div class="bottom">Challenge</div>
       </div>
+
+      <div class="container-size">500 ml</div>
+
+
+      <!-- <a href="#" id="timer-toggle-btn" class="btn btn-lg btn-default">Tap & Hold</a> -->
+
+      <div class="timer-btn-container">
+        <div class="text-container">
+          <div class="text">tap & hold</div>
+        </div>
+    
+        <div class="bg-hex">
+          <div class="hex">   
+            <div class="corner-1"></div>
+            <div class="corner-2"></div>    
+          </div>
+        </div>  
+        <div id="timer-toggle-btn">
+          <div class="hex">   
+            <div class="corner-1"></div>
+            <div class="corner-2"></div>    
+          </div>
+        </div>
+
+
+      </div>
+     
+
+      <h2 id="timer-output"></h2>
+
+      <!--<button id="log-btn" class="btn">log</button>-->
+      <div id="log" class=""></div>
     </div>
 
     <script src="vendor/jquery/jquery.js"></script>

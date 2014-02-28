@@ -61,7 +61,7 @@ window.App = (function(){
     _.bindAll(App.timer);
     App.timer.init();
 
-    $("#timer-toggle-btn")
+    $(".timer-btn-container")
     .asEventStream("click")
     .subscribe(function(event) {
         App.Audio.record();
