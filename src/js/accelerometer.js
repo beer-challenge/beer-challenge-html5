@@ -13,6 +13,7 @@ App.Accelerometer = (function(){
         */
 
         _hitStatus = new Date().getTime();
+        //console.log("_hitStatus:", _hitStatus);
     };
 
     var throttledHandleOrientation = _.throttle(handleOrientation, 10);
@@ -21,6 +22,7 @@ App.Accelerometer = (function(){
         _hitStatus = false;
         window.setTimeout(function(){
             window.addEventListener('deviceorientation', throttledHandleOrientation);
+            console.log("Accelerometer start");
         }, 2000);
     };
 

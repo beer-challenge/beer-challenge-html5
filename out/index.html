@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-framework="react">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,61 +9,23 @@
 
     <title>The Beer Challange</title>
   
-    <link href="vendor/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!--<link href="vendor/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">-->
     <!-- <link href="vendor/animate.css/animate.css" rel="stylesheet"> -->
-    <!-- <link href="css/template.css" rel="stylesheet"> -->
     <link href="css/main.css" rel="stylesheet">
   </head>
 
   <body>
+    <div id="app"></div>
 
-    <div class="site-wrapper">
-
-      <div class="logo">
-        <div class="top">The</div>
-        <div class="middle">Beer</div>
-        <div class="bottom">Challenge</div>
-      </div>
-
-      <div class="container-size">500 ml</div>
-
-
-      <!-- <a href="#" id="timer-toggle-btn" class="btn btn-lg btn-default">Tap & Hold</a> -->
-
-      <div class="timer-btn-container">
-        <div class="text-container">
-          <div class="text">tap & hold</div>
-        </div>
-    
-        <div class="bg-hex">
-          <div class="hex">   
-            <div class="corner-1"></div>
-            <div class="corner-2"></div>    
-          </div>
-        </div>  
-        <div id="timer-toggle-btn">
-          <div class="hex">   
-            <div class="corner-1"></div>
-            <div class="corner-2"></div>    
-          </div>
-        </div>
-
-
-      </div>
-     
-
-      <h2 id="timer-output"></h2>
-
-      <!--<button id="log-btn" class="btn">log</button>-->
-      <div id="log" class=""></div>
-    </div>
+    <div id="log"></div>
 
     <script src="vendor/jquery/jquery.js"></script>
     <script src="vendor/lodash/dist/lodash.js"></script>
+    <script src="vendor/react/react.js"></script>
     <script src="vendor/bacon/dist/Bacon.js"></script>
     <script src="vendor/bacon.model/dist/bacon.model.js"></script>
     <script src="vendor/bacon.jquery/dist/bacon.jquery.js"></script>
-    <script src="vendor/bootstrap/dist/js/bootstrap.js"></script>
+    <!--<script src="vendor/bootstrap/dist/js/bootstrap.js"></script>-->
 
     <script src="js/app.js"></script>
     <script src="js/audio.js"></script>

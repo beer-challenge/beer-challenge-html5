@@ -45,6 +45,17 @@
     }
 }
 
+.circle(@color, @radius) {
+    width: @radius;
+    height: @radius;
+    border-radius: 50%;
+    background: @color;
+    line-height: @radius;
+    font-size: 1300%;
+    font-weight: bold;
+    color: @bGreen;
+}
+
 .hexagon-mixin(){
     .top, .middle{
         width: 0;

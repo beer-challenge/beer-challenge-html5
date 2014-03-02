@@ -27,10 +27,22 @@
   src: url("/fonts/BebasNeue.otf");
 }
 body {
-  background: #c02c2c;
   text-align: center;
   margin-top: 100px;
+  background: transparent;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+}
+html[data-bg-color="red"] {
+  background: #c02c2c;
   color: #722425;
+}
+html[data-bg-color="green"] {
+  background: #42604a;
+  color: #26372c;
+}
+.screen {
+  display: none;
 }
 .logo {
   font-family: "frontage 3d", serif;
@@ -41,7 +53,11 @@ body {
 }
 .logo .middle {
   font-size: 850%;
-  margin: -40px;
+}
+@media (max-width: 768px) {
+  .logo .middle {
+    font-size: 700%;
+  }
 }
 .logo .bottom {
   font-size: 350%;
@@ -52,40 +68,49 @@ body {
   font-size: 350%;
   font-family: "BebasNeue";
 }
-.timer-btn-container {
+#timer-btn-container {
   position: relative;
   top: 50px;
   cursor: pointer;
+  width: 300px;
+  height: 200px;
+  padding-top: 70px;
+  margin: 0 auto;
+  -webkit-user-select: none;
 }
-.timer-btn-container .text-container {
+#timer-btn-container * {
+  pointer-events: none;
+  -webkit-user-select: none;
+}
+#timer-btn-container .text-container {
   position: relative;
-  width: 150px;
+  width: 205px;
   margin: 0 auto;
   text-transform: uppercase;
 }
-.timer-btn-container .text-container .text {
+#timer-btn-container .text-container .text {
   color: #c02c2c;
-  font-size: 230%;
+  font-size: 200%;
   font-family: "frontage regular";
   z-index: 9999;
   position: absolute;
-  top: 40px;
+  top: 50px;
 }
-.timer-btn-container #timer-toggle-btn {
+#timer-btn-container #timer-toggle-btn {
   -webkit-transform: rotate(30deg);
   zoom: 1.43;
   margin: 0 auto;
   margin-top: -85px;
 }
-.timer-btn-container #timer-toggle-btn .hex {
+#timer-btn-container #timer-toggle-btn .hex {
   width: 150px;
   height: 86px;
   background-color: #ccc;
   position: relative;
   text-align: center;
 }
-.timer-btn-container #timer-toggle-btn .hex .corner-1,
-.timer-btn-container #timer-toggle-btn .hex .corner-2 {
+#timer-btn-container #timer-toggle-btn .hex .corner-1,
+#timer-btn-container #timer-toggle-btn .hex .corner-2 {
   position: absolute;
   top: 0;
   left: 0;
@@ -95,14 +120,14 @@ body {
   overflow: hidden;
   backface-visibility: hidden;
 }
-.timer-btn-container #timer-toggle-btn .hex .corner-1 {
+#timer-btn-container #timer-toggle-btn .hex .corner-1 {
   -webkit-transform: rotate(60deg);
 }
-.timer-btn-container #timer-toggle-btn .hex .corner-2 {
+#timer-btn-container #timer-toggle-btn .hex .corner-2 {
   -webkit-transform: rotate(-60deg);
 }
-.timer-btn-container #timer-toggle-btn .hex .corner-1:before,
-.timer-btn-container #timer-toggle-btn .hex .corner-2:before {
+#timer-btn-container #timer-toggle-btn .hex .corner-1:before,
+#timer-btn-container #timer-toggle-btn .hex .corner-2:before {
   width: 173px;
   height: 173px;
   content: '';
@@ -113,19 +138,19 @@ body {
   background-repeat: no-repeat;
   backface-visibility: hidden;
 }
-.timer-btn-container #timer-toggle-btn .hex {
+#timer-btn-container #timer-toggle-btn .hex {
   margin: 0 auto;
   background: #722425;
 }
-.timer-btn-container .bg-hex .hex {
+#timer-btn-container .bg-hex .hex {
   width: 150px;
   height: 86px;
   background-color: #ccc;
   position: relative;
   text-align: center;
 }
-.timer-btn-container .bg-hex .hex .corner-1,
-.timer-btn-container .bg-hex .hex .corner-2 {
+#timer-btn-container .bg-hex .hex .corner-1,
+#timer-btn-container .bg-hex .hex .corner-2 {
   position: absolute;
   top: 0;
   left: 0;
@@ -135,14 +160,14 @@ body {
   overflow: hidden;
   backface-visibility: hidden;
 }
-.timer-btn-container .bg-hex .hex .corner-1 {
+#timer-btn-container .bg-hex .hex .corner-1 {
   -webkit-transform: rotate(60deg);
 }
-.timer-btn-container .bg-hex .hex .corner-2 {
+#timer-btn-container .bg-hex .hex .corner-2 {
   -webkit-transform: rotate(-60deg);
 }
-.timer-btn-container .bg-hex .hex .corner-1:before,
-.timer-btn-container .bg-hex .hex .corner-2:before {
+#timer-btn-container .bg-hex .hex .corner-1:before,
+#timer-btn-container .bg-hex .hex .corner-2:before {
   width: 173px;
   height: 173px;
   content: '';
@@ -153,10 +178,43 @@ body {
   background-repeat: no-repeat;
   backface-visibility: hidden;
 }
-.timer-btn-container .bg-hex .hex {
+#timer-btn-container .bg-hex .hex {
   zoom: 1.6;
   margin: 0 auto;
   background: #b02b2a;
+}
+#counter .text {
+  text-transform: uppercase;
+  font-size: 300%;
+  font-weight: bold;
+  margin-bottom: 50px;
+}
+#counter .progress-seconds {
+  margin: 0 auto;
+  position: relative;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  background: #26372c;
+  line-height: 300px;
+  font-size: 1300%;
+  font-weight: bold;
+  color: #42604a;
+}
+#counter .progress-fractions {
+  position: absolute;
+  top: -24px;
+  right: -60px;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: #26372c;
+  line-height: 150px;
+  font-size: 1300%;
+  font-weight: bold;
+  color: #42604a;
+  font-size: 50%;
+  border: 2px solid;
 }
 .display-none {
   display: none;

@@ -1,4 +1,3 @@
-/** @jsx React.DOM */
 window.App = (function(){
     "use strict";
 
@@ -22,12 +21,12 @@ window.App = (function(){
 
     function render() {
         React.renderComponent(
-            BeerApp( {model:App.timer.getElapsedModel()}),
+            <BeerApp model={App.timer.getElapsedModel()}/>,
             document.getElementById('app')
         );
     }
 
-    var TimerButton = React.createClass({displayName: 'TimerButton',
+    var TimerButton = React.createClass({
         getInitialState: function(){
             return {
                 buttonText: "press & hold"
@@ -52,42 +51,42 @@ window.App = (function(){
 
         render: function() {
             return (
-                React.DOM.div( {id:"timer-btn-container", onTouchEnd:this.toggleTimer, onTouchStart:this.buttonDown}, 
-                    React.DOM.div( {className:"text-container"}, 
-                      React.DOM.div( {className:"text"}, this.state.buttonText)
-                    ),
+                <div id="timer-btn-container" onTouchEnd={this.toggleTimer} onTouchStart={this.buttonDown}>
+                    <div className="text-container">
+                      <div className="text">{this.state.buttonText}</div>
+                    </div>
                 
-                    React.DOM.div( {className:"bg-hex"}, 
-                      React.DOM.div( {className:"hex"},    
-                        React.DOM.div( {className:"corner-1"}, "jee"),
-                        React.DOM.div( {className:"corner-2"})    
-                      )
-                    ),
+                    <div className="bg-hex">
+                      <div className="hex">   
+                        <div className="corner-1">jee</div>
+                        <div className="corner-2"></div>    
+                      </div>
+                    </div>
 
-                    React.DOM.div( {id:"timer-toggle-btn"}, 
-                      React.DOM.div( {className:"hex"},    
-                        React.DOM.div( {className:"corner-1"}),
-                        React.DOM.div( {className:"corner-2"})    
-                      )
-                    )
-                )
+                    <div id="timer-toggle-btn">
+                      <div className="hex">   
+                        <div className="corner-1"></div>
+                        <div className="corner-2"></div>    
+                      </div>
+                    </div>
+                </div>
             );
         }
     });
 
-    var Logo = React.createClass({displayName: 'Logo',
+    var Logo = React.createClass({
         render: function() {
             return (
-                React.DOM.div( {className:"logo"}, 
-                    React.DOM.div( {className:"top"}, "The"),
-                    React.DOM.div( {className:"middle"}, "Beer"),
-                    React.DOM.div( {className:"bottom"}, "Challenge")
-                )
+                <div className="logo">
+                    <div className="top">The</div>
+                    <div className="middle">Beer</div>
+                    <div className="bottom">Challenge</div>
+                </div>
             );
         }
     });
 
-    var Counter = React.createClass({displayName: 'Counter',
+    var Counter = React.createClass({
         render: function() {
             var val = this.props.time.get();
             var time = {
@@ -96,35 +95,35 @@ window.App = (function(){
             };
 
             return (
-                React.DOM.div( {id:"counter"}, 
-                    React.DOM.div( {className:"text"}, 'Ready when you are'),
-                    React.DOM.div( {className:"progress-seconds"}, 
-                        time.seconds,
-                        React.DOM.div( {className:"progress-fractions"}, time.fractions)
-                    )
-                )
+                <div id="counter">
+                    <div className="text">{'Ready when you are'}</div>
+                    <div className="progress-seconds">
+                        {time.seconds}
+                        <div className="progress-fractions">{time.fractions}</div>
+                    </div>
+                </div>
             );
         }
     });
 
 
-    var BeerApp = React.createClass({displayName: 'BeerApp',
+    var BeerApp = React.createClass({
         getInitialState: function(){
             return {
                 pages: {
                     front: function(running, handleUserInput){
                         return (
-                            React.DOM.div(null, 
-                                Logo(null ),
-                                TimerButton( {running:running, handleUserInput:handleUserInput})
-                            )
+                            <div>
+                                <Logo />
+                                <TimerButton running={running} handleUserInput={handleUserInput}/>
+                            </div>
                         );
                     },
                     progress: function(time, state){
                         return (
-                            React.DOM.div(null, 
-                                Counter( {time:time})
-                            )
+                            <div>
+                                <Counter time={time}/>
+                            </div>
                         );
                     },
                 },
@@ -154,7 +153,7 @@ window.App = (function(){
             $('html').attr("data-bg-color", color);
 
             return (
-               React.DOM.div( {id:"page"}, currentPage)
+               <div id="page">{currentPage}</div>
             );
         }
     });

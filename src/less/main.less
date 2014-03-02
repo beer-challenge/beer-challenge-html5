@@ -1,4 +1,6 @@
 @bGreen: #42604a;
+@bDarkGreen :#26372c;
+
 @bRed: #c02c2c;
 @bDarkRed: #722425;
 @bSemiDarkRed: #b02b2a;
@@ -7,10 +9,24 @@
 @import "mixins";
 
 body{
-    background: @bRed;
     text-align: center;
     margin-top: 100px;
+    background: transparent;
+    -webkit-user-select: none;
+    -webkit-tap-highlight-color:  rgba(255, 255, 255, 0); 
+}
+
+html[data-bg-color="red"]{
+    background: @bRed;
     color: @bDarkRed;
+}
+html[data-bg-color="green"] {
+    background: @bGreen;
+    color: @bDarkGreen;
+}
+
+.screen{
+    display: none;
 }
 
 .logo {
@@ -22,7 +38,9 @@ body{
     }
     .middle{
         font-size: 850%;
-        margin: -40px;
+        @media (max-width: 768px) {
+            font-size: 700%;
+        }
     }
     .bottom{
         font-size: 350%;
@@ -36,22 +54,32 @@ body{
     font-family: "BebasNeue";
 }
 
-.timer-btn-container{
+#timer-btn-container{
     position: relative;
     top: 50px;
     cursor: pointer;
+    width: 300px;
+    height: 200px;
+    padding-top: 70px;
+    margin: 0 auto;
+    -webkit-user-select: none;
+    & * {
+        pointer-events: none;
+        -webkit-user-select: none;
+    }
     .text-container{
         position: relative;
-        width: 150px;
+        width: 205px;
         margin: 0 auto;
         text-transform: uppercase;
+
         .text{
             color: @bRed;
-            font-size: 230%;
+            font-size: 200%;
             font-family: "frontage regular";
             z-index: 9999;
             position: absolute;
-            top: 40px
+            top: 50px
         }
     }
    
@@ -73,6 +101,28 @@ body{
             margin: 0 auto;
             background: @bSemiDarkRed;
         }
+    }
+}
+
+#counter{
+    .text{
+        text-transform: uppercase;
+        font-size: 300%;
+        font-weight: bold;
+        margin-bottom: 50px;
+    }
+    .progress-seconds{
+        margin: 0 auto;
+        position: relative;
+        .circle(@bDarkGreen, 300px);
+    }
+    .progress-fractions{
+        position: absolute;
+        top: -24px;
+        right: -60px;
+        .circle(@bDarkGreen, 150px);
+        font-size: 50%;
+        border: 2px solid;
     }
 }
 

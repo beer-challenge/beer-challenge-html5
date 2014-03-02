@@ -3,6 +3,7 @@ var gulp = require('gulp'),
     watch = require('gulp-watch'),
     connect = require('gulp-connect'),
     jshint = require('gulp-jshint'),
+    react = require('gulp-react'),
     stylish = require('jshint-stylish');
 
 var options = {
@@ -46,8 +47,18 @@ gulp.task('html', function () {
     .pipe(connect.reload());
 });
 
+gulp.task('fonts', function () {
+  gulp.src(options.src + 'fonts/**')
+    .pipe(gulp.dest(options.out + "fonts/"))
+});
+
+gulp.task('img', function () {
+  gulp.src(options.src + 'img/**')
+    .pipe(gulp.dest(options.out + "img/"))
+});
+
 gulp.task('js', function () {
-  gulp.src(options.src + 'js/**/*.js')
+  gulp.src([options.src + 'js/**/*.js'])
     .pipe(gulp.dest(options.out + "js"))
     .pipe(connect.reload());
 });
@@ -55,6 +66,13 @@ gulp.task('js', function () {
 gulp.task('vendor', function () {
   gulp.src('./bower_components/**')
     .pipe(gulp.dest(options.out + 'vendor'));
+});
+
+gulp.task('jsx', function () {
+    gulp.src(options.src + 'jsx/*')
+    .pipe(react())
+    .pipe(gulp.dest(options.out + "js"))
+    .pipe(connect.reload());
 });
 
 gulp.task('less', function() {
@@ -68,6 +86,7 @@ gulp.task('watch', function () {
   gulp.watch([options.src + '*.html'], ['html']);
   gulp.watch([options.src + 'less/*.less'], ['less']);
   gulp.watch([options.src + 'js/**/*.js'], ['js']);
+  gulp.watch([options.src + 'jsx/**'], ['jsx']);
 });
 
-gulp.task('default', ['connect', 'vendor', 'js', 'less', 'html', 'watch']);
+gulp.task('default', ['connect', 'vendor', 'js', 'jsx', 'less', 'fonts', 'img', 'html', 'watch']);

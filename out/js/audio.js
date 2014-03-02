@@ -24,6 +24,7 @@ App.Audio = (function(){
 
     Audio.record = function(){
         navigator.getMedia(audioConstraints, function(stream) {
+            console.log("record");
             App.timer.start();
 
             audioStream = stream;
@@ -71,6 +72,9 @@ App.Audio = (function(){
 
         var now = new Date().getTime();
         var diff = now - App.Accelerometer.status();
+        if(beatCutOff > 0.5){
+            //console.log("beatCutOff", beatCutOff);
+        }
 
         if(beatCutOff > 0.5 && diff < 50){
             console.log("audio", beatCutOff, "diff:", diff);
