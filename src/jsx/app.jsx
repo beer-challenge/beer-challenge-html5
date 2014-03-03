@@ -3,46 +3,29 @@ window.App = (function(){
 
     var App = {};
 
-    window.onerror = function(msg, url, line) {
-       console.log("Error: " + msg + "\nurl: " + url + "\nline #: " + line);
-       var suppressErrorAlert = false;
-       return suppressErrorAlert;
-    };
-
-    var origConsoleLog = console.log;
-    console.log = function(){
-        var txt = "";
-        _.each(arguments, function(arg){
-            txt += " " + arg;
-        });
-        $('#log').prepend(txt + "\n");
-        origConsoleLog.apply(console, arguments);
-    };
-
     function render() {
         React.renderComponent(
-            <BeerApp model={App.timer.getElapsedModel()}/>,
+            <BeerApp time={App.Timer.getElapsedModel()} status={App.Timer.getStateModel()}/>,
             document.getElementById('app')
         );
     }
+
+    $(window).keyup(function(event){
+        var charTyped = String.fromCharCode(event.keyCode);
+        if(charTyped === "S"){
+            App.Timer.start();
+        }
+        else if(charTyped === "E"){
+            App.Timer.stop();
+        }
+        //console.log("e", event, charTyped);
+    });
 
     var TimerButton = React.createClass({
         getInitialState: function(){
             return {
                 buttonText: "press & hold"
             };
-        },
-        toggleTimer: function(event){
-            if(this.props.running){
-                App.Audio.stopRecording();
-                App.Accelerometer.stop();
-            }
-            else{
-                App.Audio.record();
-                App.Accelerometer.start();
-            }
-
-            this.props.handleUserInput(!this.props.running);
         },
 
         buttonDown: function(event){
@@ -51,7 +34,7 @@ window.App = (function(){
 
         render: function() {
             return (
-                <div id="timer-btn-container" onTouchEnd={this.toggleTimer} onTouchStart={this.buttonDown}>
+                <div id="timer-btn-container" onTouchEnd={App.Timer.start} onTouchStart={this.buttonDown}>
                     <div className="text-container">
                       <div className="text">{this.state.buttonText}</div>
                     </div>
@@ -111,11 +94,11 @@ window.App = (function(){
         getInitialState: function(){
             return {
                 pages: {
-                    front: function(running, handleUserInput){
+                    front: function(running){
                         return (
                             <div>
                                 <Logo />
-                                <TimerButton running={running} handleUserInput={handleUserInput}/>
+                                <TimerButton running={running} />
                             </div>
                         );
                     },
@@ -131,17 +114,12 @@ window.App = (function(){
             }
         },
 
-        handleUserInput: function(running) {
-            this.setState({running: running});
-        },
-
         render: function() {
-            var front = this.state.pages.front(this.state.running, this.handleUserInput);
-            var progress = this.state.pages.progress(this.props.model)
-
+            var front = this.state.pages.front(this.props.status);
+            var progress = this.state.pages.progress(this.props.time)
 
             var currentPage, color;
-            if(!this.state.running){
+            if(!this.props.status.get()){
                 currentPage = front;
                 color = "red";
             }
@@ -149,6 +127,8 @@ window.App = (function(){
                 currentPage = progress;
                 color = "green";
             }
+
+            //console.log("currentPage:", currentPage, "color:", color);
 
             $('html').attr("data-bg-color", color);
 
@@ -158,18 +138,15 @@ window.App = (function(){
         }
     });
 
-    App.timer = {
+    App.Timer = {
         _intervalId: null,
         _elapsedModel: Bacon.Model(),
         _stateModel: Bacon.Model(),
 
         init: function(){
+            console.log("App.Timer init");
             this._elapsedModel.set(0);
-            // this._elapsedModel.changes()
-            // .map(function(val) {
-            //     return (Math.floor(val/100) * 0.1).toFixed(1);
-            // })
-            // .assign($("#timer-output"), "text");
+            this._stateModel.set(false)
         },
 
         updateModel: function(){
@@ -178,21 +155,26 @@ window.App = (function(){
         },
 
         start: function(){
-            console.log("timer start");
-            this._elapsedModel.set(0);
-            this._intervalId = window.setInterval(this.updateModel, 100);
-            this._stateModel.set(true);
+            console.log("timer: start");
+            
+            var self = this;
+            App.Audio.record(function(){
+                console.log("timer, audio callback");
+                self._elapsedModel.set(0);
+                self._stateModel.set(true)
+                self._intervalId = window.setInterval(self.updateModel, 100);
+                App.Accelerometer.start();
+            });
         },
 
         stop: function(){
-            console.log("timer stop");
+            console.log("timer: stop");
             window.clearInterval(this._intervalId);
 
-            this._stateModel.set(false);
-        },
+            this._stateModel.set(false)
 
-        isRunning: function(){
-            return this._stateModel.get();
+            App.Accelerometer.stop();
+            App.Audio.stopRecording();   
         },
 
         getElapsedModel: function(){
@@ -201,19 +183,10 @@ window.App = (function(){
 
         getStateModel: function(){
             return this._stateModel;
-        }
+        },
     };
-    _.bindAll(App.timer);
-    App.timer.init();
-
-
-    // $("#timer-btn-container")
-    // .asEventStream("click")
-    // .subscribe(function(event) {
-    //     alert("start");
-    //     App.Audio.record();
-    //     App.Accelerometer.start();
-    // });
+    _.bindAll(App.Timer);
+    App.Timer.init();
 
     // App.timer.getStateModel().changes()
     // .map(function(val) {

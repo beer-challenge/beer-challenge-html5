@@ -22,14 +22,9 @@ App.Audio = (function(){
         video: false
     };
 
-    Audio.record = function(){
+    Audio.record = function(callback){
         navigator.getMedia(audioConstraints, function(stream) {
-            console.log("record");
-            App.timer.start();
-
-            audioStream = stream;
-
-            console.log("stream:", stream);
+            console.log("record, stream:", stream);
 
             source = audioContext.createBufferSource();
             analyser = audioContext.createAnalyser();
@@ -40,14 +35,19 @@ App.Audio = (function(){
             microphone.connect(analyser);
 
             intervalId = window.setInterval(updateAudio, 50);
+
+            if(callback){
+                callback();
+            }
         }, function() {
             console.log("error:", arguments);
         });
     };
 
     Audio.stopRecording = function(){
-        App.timer.stop();
-        audioStream.stop();
+        if(audioStream){
+            audioStream.stop();    
+        }
         window.clearInterval(intervalId);
     };
 
@@ -78,7 +78,7 @@ App.Audio = (function(){
 
         if(beatCutOff > 0.5 && diff < 50){
             console.log("audio", beatCutOff, "diff:", diff);
-            Audio.stopRecording();
+            App.Timer.stop();
         }
 
         if (normLevel  > beatCutOff && normLevel > BEAT_MIN){
