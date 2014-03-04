@@ -3,9 +3,16 @@ window.App = (function(){
 
     var App = {};
 
+    App.States = {
+        front: "FRONT",
+        ready: "READY",
+        progress: "PROGRESS",
+        end: "END"
+    };
+
     function render() {
         React.renderComponent(
-            <BeerApp time={App.Timer.getElapsedModel()} status={App.Timer.getStateModel()}/>,
+            <BeerApp time={App.Timer.getElapsedModel()} state={App.Timer.getStateModel()}/>,
             document.getElementById('app')
         );
     }
@@ -22,31 +29,36 @@ window.App = (function(){
     });
 
     var TimerButton = React.createClass({
-        getInitialState: function(){
-            return {
-                buttonText: "press & hold"
-            };
+        onTouchStart: function(event){
+            App.Timer.setState(App.States.ready);
         },
 
-        buttonDown: function(event){
-            this.setState({buttonText: "Release now"});
+        onTouchCancel: function(event){
+            console.log("touch cancel");
+            App.Timer.setState(App.States.front);
         },
 
         render: function() {
+            var buttonText = "tap & hold";
+
+            if(this.props.state.get() === App.States.ready){
+                buttonText = "release now";
+            }
+
             return (
-                <div id="timer-btn-container" onTouchEnd={App.Timer.start} onTouchStart={this.buttonDown}>
+                <div id="timer-btn" className={this.props.state.get()} onTouchEnd={App.Timer.start} onTouchStart={this.onTouchStart} onTouchCancel={this.onTouchCancel}>
                     <div className="text-container">
-                      <div className="text">{this.state.buttonText}</div>
+                      <div className="text">{buttonText}</div>
                     </div>
                 
-                    <div className="bg-hex">
+                    <div className="bg-hex hexagon">
                       <div className="hex">   
-                        <div className="corner-1">jee</div>
+                        <div className="corner-1"></div>
                         <div className="corner-2"></div>    
                       </div>
                     </div>
 
-                    <div id="timer-toggle-btn">
+                    <div className="front-hex hexagon">
                       <div className="hex">   
                         <div className="corner-1"></div>
                         <div className="corner-2"></div>    
@@ -65,6 +77,14 @@ window.App = (function(){
                     <div className="middle">Beer</div>
                     <div className="bottom">Challenge</div>
                 </div>
+            );
+        }
+    });
+
+    var BottomHelp = React.createClass({
+        render: function() {
+            return (
+                <div className="bottom-help">slam top stop</div>
             );
         }
     });
@@ -94,11 +114,19 @@ window.App = (function(){
         getInitialState: function(){
             return {
                 pages: {
-                    front: function(running){
+                    front: function(state){
                         return (
                             <div>
                                 <Logo />
-                                <TimerButton running={running} />
+                                <TimerButton state={state} />
+                            </div>
+                        );
+                    },
+                    ready: function(time, state){
+                        return (
+                            <div>
+                                <Counter time={time}/>
+                                <TimerButton state={state} />
                             </div>
                         );
                     },
@@ -106,37 +134,46 @@ window.App = (function(){
                         return (
                             <div>
                                 <Counter time={time}/>
+                                <BottomHelp />
                             </div>
                         );
-                    },
+                    }
                 },
                 running: false
             }
         },
 
         render: function() {
-            var front = this.state.pages.front(this.props.status);
-            var progress = this.state.pages.progress(this.props.time)
+            var pages = {};
 
-            var currentPage, color;
-            if(!this.props.status.get()){
-                currentPage = front;
-                color = "red";
-            }
-            else{
-                currentPage = progress;
-                color = "green";
-            }
+            pages[App.States.front] = {
+                page: this.state.pages.front(this.props.state),
+                color: "red"
+            };
 
+            pages[App.States.ready] = {
+                page: this.state.pages.ready(this.props.time, this.props.state),
+                color: "green"
+            };
+
+            pages[App.States.progress] = {
+                page: this.state.pages.progress(this.props.time, this.props.state),
+                color: "green"
+            };
+
+            var currentPage = pages[this.props.state.get()];
+            
             //console.log("currentPage:", currentPage, "color:", color);
 
-            $('html').attr("data-bg-color", color);
+            $('html').attr("data-bg-color", currentPage.color);
 
             return (
-               <div id="page">{currentPage}</div>
+               <div id="page">{currentPage.page}</div>
             );
         }
     });
+
+    
 
     App.Timer = {
         _intervalId: null,
@@ -146,7 +183,8 @@ window.App = (function(){
         init: function(){
             console.log("App.Timer init");
             this._elapsedModel.set(0);
-            this._stateModel.set(false)
+            this._stateModel.set(App.States.front);
+            render();
         },
 
         updateModel: function(){
@@ -161,7 +199,7 @@ window.App = (function(){
             App.Audio.record(function(){
                 console.log("timer, audio callback");
                 self._elapsedModel.set(0);
-                self._stateModel.set(true)
+                self._stateModel.set(App.States.progress);
                 self._intervalId = window.setInterval(self.updateModel, 100);
                 App.Accelerometer.start();
             });
@@ -171,7 +209,7 @@ window.App = (function(){
             console.log("timer: stop");
             window.clearInterval(this._intervalId);
 
-            this._stateModel.set(false)
+            this._stateModel.set(App.States.end);
 
             App.Accelerometer.stop();
             App.Audio.stopRecording();   
@@ -184,25 +222,15 @@ window.App = (function(){
         getStateModel: function(){
             return this._stateModel;
         },
+
+        setState: function(state){
+            console.log("setState:", state);
+            this._stateModel.set(state);
+            render();
+        }
     };
     _.bindAll(App.Timer);
     App.Timer.init();
-
-    // App.timer.getStateModel().changes()
-    // .map(function(val) {
-    //     return !val? "inline-block": "none";
-    // })
-    // .assign($("#timer-toggle-btn"), "css", "display");
-
-    /*
-    $("#log-btn")
-    .asEventStream("click")
-    .subscribe(function(){
-        $('#log').addClass("animated slideInDown"); //.removeClass("display-none")
-    });
-    */
-
-    render();
 
     return App;
 }).call(this);

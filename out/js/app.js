@@ -4,9 +4,16 @@ window.App = (function(){
 
     var App = {};
 
+    App.States = {
+        front: "FRONT",
+        ready: "READY",
+        progress: "PROGRESS",
+        end: "END"
+    };
+
     function render() {
         React.renderComponent(
-            BeerApp( {time:App.Timer.getElapsedModel(), status:App.Timer.getStateModel()}),
+            BeerApp( {time:App.Timer.getElapsedModel(), state:App.Timer.getStateModel()}),
             document.getElementById('app')
         );
     }
@@ -23,31 +30,36 @@ window.App = (function(){
     });
 
     var TimerButton = React.createClass({displayName: 'TimerButton',
-        getInitialState: function(){
-            return {
-                buttonText: "press & hold"
-            };
+        onTouchStart: function(event){
+            App.Timer.setState(App.States.ready);
         },
 
-        buttonDown: function(event){
-            this.setState({buttonText: "Release now"});
+        onTouchCancel: function(event){
+            console.log("touch cancel");
+            App.Timer.setState(App.States.front);
         },
 
         render: function() {
+            var buttonText = "tap & hold";
+
+            if(this.props.state.get() === App.States.ready){
+                buttonText = "release now";
+            }
+
             return (
-                React.DOM.div( {id:"timer-btn-container", onTouchEnd:App.Timer.start, onTouchStart:this.buttonDown}, 
+                React.DOM.div( {id:"timer-btn", className:this.props.state.get(), onTouchEnd:App.Timer.start, onTouchStart:this.onTouchStart, onTouchCancel:this.onTouchCancel}, 
                     React.DOM.div( {className:"text-container"}, 
-                      React.DOM.div( {className:"text"}, this.state.buttonText)
+                      React.DOM.div( {className:"text"}, buttonText)
                     ),
                 
-                    React.DOM.div( {className:"bg-hex"}, 
+                    React.DOM.div( {className:"bg-hex hexagon"}, 
                       React.DOM.div( {className:"hex"},    
-                        React.DOM.div( {className:"corner-1"}, "jee"),
+                        React.DOM.div( {className:"corner-1"}),
                         React.DOM.div( {className:"corner-2"})    
                       )
                     ),
 
-                    React.DOM.div( {id:"timer-toggle-btn"}, 
+                    React.DOM.div( {className:"front-hex hexagon"}, 
                       React.DOM.div( {className:"hex"},    
                         React.DOM.div( {className:"corner-1"}),
                         React.DOM.div( {className:"corner-2"})    
@@ -66,6 +78,14 @@ window.App = (function(){
                     React.DOM.div( {className:"middle"}, "Beer"),
                     React.DOM.div( {className:"bottom"}, "Challenge")
                 )
+            );
+        }
+    });
+
+    var BottomHelp = React.createClass({displayName: 'BottomHelp',
+        render: function() {
+            return (
+                React.DOM.div( {className:"bottom-help"}, "slam top stop")
             );
         }
     });
@@ -95,49 +115,66 @@ window.App = (function(){
         getInitialState: function(){
             return {
                 pages: {
-                    front: function(running){
+                    front: function(state){
                         return (
                             React.DOM.div(null, 
                                 Logo(null ),
-                                TimerButton( {running:running} )
+                                TimerButton( {state:state} )
+                            )
+                        );
+                    },
+                    ready: function(time, state){
+                        return (
+                            React.DOM.div(null, 
+                                Counter( {time:time}),
+                                TimerButton( {state:state} )
                             )
                         );
                     },
                     progress: function(time, state){
                         return (
                             React.DOM.div(null, 
-                                Counter( {time:time})
+                                Counter( {time:time}),
+                                BottomHelp(null )
                             )
                         );
-                    },
+                    }
                 },
                 running: false
             }
         },
 
         render: function() {
-            var front = this.state.pages.front(this.props.status);
-            var progress = this.state.pages.progress(this.props.time)
+            var pages = {};
 
-            var currentPage, color;
-            if(!this.props.status.get()){
-                currentPage = front;
-                color = "red";
-            }
-            else{
-                currentPage = progress;
-                color = "green";
-            }
+            pages[App.States.front] = {
+                page: this.state.pages.front(this.props.state),
+                color: "red"
+            };
 
+            pages[App.States.ready] = {
+                page: this.state.pages.ready(this.props.time, this.props.state),
+                color: "green"
+            };
+
+            pages[App.States.progress] = {
+                page: this.state.pages.progress(this.props.time, this.props.state),
+                color: "green"
+            };
+
+            var currentPage = pages[this.props.state.get()];
+            
             //console.log("currentPage:", currentPage, "color:", color);
 
-            $('html').attr("data-bg-color", color);
+            $('html').attr("data-bg-color", currentPage.color);
 
             return (
-               React.DOM.div( {id:"page"}, currentPage)
+               React.DOM.div( {id:"page"}, currentPage.page)
             );
         }
     });
+
+    
 
     App.Timer = {
         _intervalId: null,
@@ -147,7 +184,8 @@ window.App = (function(){
         init: function(){
             console.log("App.Timer init");
             this._elapsedModel.set(0);
-            this._stateModel.set(false)
+            this._stateModel.set(App.States.front);
+            render();
         },
 
         updateModel: function(){
@@ -162,7 +200,7 @@ window.App = (function(){
             App.Audio.record(function(){
                 console.log("timer, audio callback");
                 self._elapsedModel.set(0);
-                self._stateModel.set(true)
+                self._stateModel.set(App.States.progress);
                 self._intervalId = window.setInterval(self.updateModel, 100);
                 App.Accelerometer.start();
             });
@@ -172,7 +210,7 @@ window.App = (function(){
             console.log("timer: stop");
             window.clearInterval(this._intervalId);
 
-            this._stateModel.set(false)
+            this._stateModel.set(App.States.end);
 
             App.Accelerometer.stop();
             App.Audio.stopRecording();   
@@ -185,25 +223,15 @@ window.App = (function(){
         getStateModel: function(){
             return this._stateModel;
         },
+
+        setState: function(state){
+            console.log("setState:", state);
+            this._stateModel.set(state);
+            render();
+        }
     };
     _.bindAll(App.Timer);
     App.Timer.init();
-
-    // App.timer.getStateModel().changes()
-    // .map(function(val) {
-    //     return !val? "inline-block": "none";
-    // })
-    // .assign($("#timer-toggle-btn"), "css", "display");
-
-    /*
-    $("#log-btn")
-    .asEventStream("click")
-    .subscribe(function(){
-        $('#log').addClass("animated slideInDown"); //.removeClass("display-none")
-    });
-    */
-
-    render();
 
     return App;
 }).call(this);

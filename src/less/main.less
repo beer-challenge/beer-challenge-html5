@@ -1,5 +1,6 @@
 @bGreen: #42604a;
-@bDarkGreen :#26372c;
+@bDarkGreen: #26372c;
+@bSemiDarkGreen: #3c5744;
 
 @bRed: #c02c2c;
 @bDarkRed: #722425;
@@ -8,12 +9,19 @@
 @import "fonts";
 @import "mixins";
 
+html{
+    overflow: hidden;
+}
+
 body{
     text-align: center;
-    margin-top: 100px;
+    //margin-top: 100px;
     background: transparent;
     -webkit-user-select: none;
     -webkit-tap-highlight-color:  rgba(255, 255, 255, 0); 
+    margin-top: 20px;
+
+    //min-height: 500px;
 }
 
 html[data-bg-color="red"]{
@@ -54,14 +62,12 @@ html[data-bg-color="green"] {
     font-family: "BebasNeue";
 }
 
-#timer-btn-container{
-    position: relative;
-    top: 50px;
+#timer-btn{
+    position: absolute;
+    bottom: 100px;
     cursor: pointer;
-    width: 300px;
-    height: 200px;
-    padding-top: 70px;
-    margin: 0 auto;
+    width: 100%;
+    margin: 0 -10px;
     -webkit-user-select: none;
     & * {
         pointer-events: none;
@@ -79,28 +85,50 @@ html[data-bg-color="green"] {
             font-family: "frontage regular";
             z-index: 9999;
             position: absolute;
-            top: 50px
+            top: 36px
         }
     }
+
+    .hexagon{
+        position: relative;
+        margin: 0 auto;
+        width: 180px;
+        .hexagon-mixin();
+    }
+
    
-    #timer-toggle-btn{
+    .front-hex{
         -webkit-transform: rotate(30deg);
         zoom: 1.43;
-        margin: 0 auto;
-        margin-top: -85px;
-        .hexagon-flat-top-mixin();
+
         .hex{
             margin: 0 auto; 
             background: @bDarkRed;
         }
     }
+
     .bg-hex{
-        .hexagon-flat-top-mixin();
+        height: 0;
+        zoom: 1.66;
+        left: 15px;
+        top: -6px;
+
         .hex{
-            zoom: 1.6;
-            margin: 0 auto;
             background: @bSemiDarkRed;
         }
+    }
+}
+#timer-btn.READY{
+    .hex{
+        background: @bDarkGreen;
+    }
+    .bg-hex .hex{
+        background: @bSemiDarkGreen;
+    }
+
+
+    .text{
+        color: @bGreen;
     }
 }
 
@@ -125,8 +153,6 @@ html[data-bg-color="green"] {
         border: 2px solid;
     }
 }
-
-
 
 .display-none{
     display: none;

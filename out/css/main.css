@@ -26,12 +26,15 @@
   font-family: "BebasNeue";
   src: url("/fonts/BebasNeue.otf");
 }
+html {
+  overflow: hidden;
+}
 body {
   text-align: center;
-  margin-top: 100px;
   background: transparent;
   -webkit-user-select: none;
   -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+  margin-top: 20px;
 }
 html[data-bg-color="red"] {
   background: #c02c2c;
@@ -68,49 +71,46 @@ html[data-bg-color="green"] {
   font-size: 350%;
   font-family: "BebasNeue";
 }
-#timer-btn-container {
-  position: relative;
-  top: 50px;
+#timer-btn {
+  position: absolute;
+  bottom: 100px;
   cursor: pointer;
-  width: 300px;
-  height: 200px;
-  padding-top: 70px;
-  margin: 0 auto;
+  width: 100%;
+  margin: 0 -10px;
   -webkit-user-select: none;
 }
-#timer-btn-container * {
+#timer-btn * {
   pointer-events: none;
   -webkit-user-select: none;
 }
-#timer-btn-container .text-container {
+#timer-btn .text-container {
   position: relative;
   width: 205px;
   margin: 0 auto;
   text-transform: uppercase;
 }
-#timer-btn-container .text-container .text {
+#timer-btn .text-container .text {
   color: #c02c2c;
   font-size: 200%;
   font-family: "frontage regular";
   z-index: 9999;
   position: absolute;
-  top: 50px;
+  top: 36px;
 }
-#timer-btn-container #timer-toggle-btn {
-  -webkit-transform: rotate(30deg);
-  zoom: 1.43;
+#timer-btn .hexagon {
+  position: relative;
   margin: 0 auto;
-  margin-top: -85px;
+  width: 180px;
 }
-#timer-btn-container #timer-toggle-btn .hex {
+#timer-btn .hexagon .hex {
   width: 150px;
   height: 86px;
   background-color: #ccc;
   position: relative;
   text-align: center;
 }
-#timer-btn-container #timer-toggle-btn .hex .corner-1,
-#timer-btn-container #timer-toggle-btn .hex .corner-2 {
+#timer-btn .hexagon .hex .corner-1,
+#timer-btn .hexagon .hex .corner-2 {
   position: absolute;
   top: 0;
   left: 0;
@@ -118,16 +118,16 @@ html[data-bg-color="green"] {
   height: 100%;
   background: inherit;
   overflow: hidden;
-  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
-#timer-btn-container #timer-toggle-btn .hex .corner-1 {
+#timer-btn .hexagon .hex .corner-1 {
   -webkit-transform: rotate(60deg);
 }
-#timer-btn-container #timer-toggle-btn .hex .corner-2 {
+#timer-btn .hexagon .hex .corner-2 {
   -webkit-transform: rotate(-60deg);
 }
-#timer-btn-container #timer-toggle-btn .hex .corner-1:before,
-#timer-btn-container #timer-toggle-btn .hex .corner-2:before {
+#timer-btn .hexagon .hex .corner-1:before,
+#timer-btn .hexagon .hex .corner-2:before {
   width: 173px;
   height: 173px;
   content: '';
@@ -136,52 +136,32 @@ html[data-bg-color="green"] {
   left: 0;
   background: inherit;
   background-repeat: no-repeat;
-  backface-visibility: hidden;
 }
-#timer-btn-container #timer-toggle-btn .hex {
+#timer-btn .front-hex {
+  -webkit-transform: rotate(30deg);
+  zoom: 1.43;
+}
+#timer-btn .front-hex .hex {
   margin: 0 auto;
   background: #722425;
 }
-#timer-btn-container .bg-hex .hex {
-  width: 150px;
-  height: 86px;
-  background-color: #ccc;
-  position: relative;
-  text-align: center;
+#timer-btn .bg-hex {
+  height: 0;
+  zoom: 1.66;
+  left: 15px;
+  top: -6px;
 }
-#timer-btn-container .bg-hex .hex .corner-1,
-#timer-btn-container .bg-hex .hex .corner-2 {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: inherit;
-  overflow: hidden;
-  backface-visibility: hidden;
-}
-#timer-btn-container .bg-hex .hex .corner-1 {
-  -webkit-transform: rotate(60deg);
-}
-#timer-btn-container .bg-hex .hex .corner-2 {
-  -webkit-transform: rotate(-60deg);
-}
-#timer-btn-container .bg-hex .hex .corner-1:before,
-#timer-btn-container .bg-hex .hex .corner-2:before {
-  width: 173px;
-  height: 173px;
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  background: inherit;
-  background-repeat: no-repeat;
-  backface-visibility: hidden;
-}
-#timer-btn-container .bg-hex .hex {
-  zoom: 1.6;
-  margin: 0 auto;
+#timer-btn .bg-hex .hex {
   background: #b02b2a;
+}
+#timer-btn.READY .hex {
+  background: #26372c;
+}
+#timer-btn.READY .bg-hex .hex {
+  background: #3c5744;
+}
+#timer-btn.READY .text {
+  color: #42604a;
 }
 #counter .text {
   text-transform: uppercase;
