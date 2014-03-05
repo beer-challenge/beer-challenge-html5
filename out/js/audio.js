@@ -6,15 +6,8 @@ App.Audio = (function(){
     navigator.getMedia = (navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia);
 
     var audioContext = new window.webkitAudioContext(),
-
-    beatCutOff = 0,
-    BEAT_HOLD_TIME = 20, //num of frames to hold a beat
-    BEAT_DECAY_RATE = 0.97,
-    BEAT_MIN = 0.6, //level less than this is no beat
     normLevel = 0,
-    maxLevel = 0,
     volSens = 4.0,
-    beatTime = 30, //avoid auto beat at start
     
     recorder, source, analyser, microphone, intervalId, freqByteData, audioStream,
     audioConstraints = {
@@ -65,33 +58,12 @@ App.Audio = (function(){
         var aveLevel = sum / length;
 
         normLevel = (aveLevel / 256) * volSens; //256 is the highest a freq data can be
-        if(normLevel > maxLevel){
-            maxLevel = normLevel;
-        }
-        //console.log("max:", maxLevel, "norm:", normLevel);
 
-        var now = new Date().getTime();
+        var now = window.App.getTime();
         var diff = now - App.Accelerometer.status();
-        if(beatCutOff > 0.5){
-            //console.log("beatCutOff", beatCutOff);
-        }
-
-        if(beatCutOff > 0.5 && diff < 50){
-            console.log("audio", beatCutOff, "diff:", diff);
+        if(normLevel > 0.2 && diff < 250){
+            console.log("audio", normLevel, "diff:", diff);
             App.Timer.stop();
-        }
-
-        if (normLevel  > beatCutOff && normLevel > BEAT_MIN){
-            beatCutOff = normLevel *1.1;
-            beatTime = 0;
-        }
-        else{
-            if (beatTime < BEAT_HOLD_TIME){
-                beatTime ++;
-            }
-            else{
-                beatCutOff *= BEAT_DECAY_RATE;
-            }
         }
     };
 

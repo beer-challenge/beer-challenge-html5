@@ -1,0 +1,22 @@
+@media (max-width: 580px) {
+  .logo .middle {
+    font-size: 450%;
+  }
+  .logo .bottom {
+    font-size: 200%;
+  }
+  #timer-btn {
+    zoom: 0.65;
+  }
+  #counter {
+    zoom: 0.55;
+  }
+  #counter .text {
+    font-size: 250%;
+  }
+}
+@media (min-width: 580px) and (max-width: 992px) {
+  .logo .middle {
+    font-size: 700%;
+  }
+}

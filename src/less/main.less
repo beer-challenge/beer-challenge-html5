@@ -15,7 +15,6 @@ html{
 
 body{
     text-align: center;
-    //margin-top: 100px;
     background: transparent;
     -webkit-user-select: none;
     -webkit-tap-highlight-color:  rgba(255, 255, 255, 0); 
@@ -46,9 +45,6 @@ html[data-bg-color="green"] {
     }
     .middle{
         font-size: 850%;
-        @media (max-width: 768px) {
-            font-size: 700%;
-        }
     }
     .bottom{
         font-size: 350%;
@@ -147,11 +143,26 @@ html[data-bg-color="green"] {
     .progress-fractions{
         position: absolute;
         top: -24px;
-        right: -60px;
+        right: -75px;
         .circle(@bDarkGreen, 150px);
         font-size: 50%;
         border: 2px solid;
     }
+}
+
+.bottom-help{
+    font-size: 200%;
+    margin-top: 30px;
+    bottom: 0;
+}
+
+#try-again-btn{
+    font-size: 100%;
+    padding: 15px;
+    background: @bDarkGreen;
+    color: @bGreen;
+    border: 0;
+    border-radius: 10px;
 }
 
 .display-none{
@@ -172,6 +183,4 @@ html[data-bg-color="green"] {
     background: #000;
 }
 
-#timer-toggle-btn:active{
-    opacity: 0.7;
-}
+@import "responsive";

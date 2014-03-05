@@ -10,6 +10,28 @@ window.App = (function(){
         end: "END"
     };
 
+    var pages = {};
+
+    pages[App.States.front] = {
+        color: "red",
+        timerButtonText: "tap & hold"
+    };
+
+    pages[App.States.ready] = {
+        color: "green",
+        timerButtonText: "release now",
+        progressText: "ready when you are"
+    };
+
+    pages[App.States.progress] = {
+        color: "green",
+        progressText: "Go!"
+    };
+
+    pages[App.States.end] = {
+        color: "green"
+    };
+
     function render() {
         React.renderComponent(
             <BeerApp time={App.Timer.getElapsedModel()} state={App.Timer.getStateModel()}/>,
@@ -39,11 +61,7 @@ window.App = (function(){
         },
 
         render: function() {
-            var buttonText = "tap & hold";
-
-            if(this.props.state.get() === App.States.ready){
-                buttonText = "release now";
-            }
+            var buttonText = pages[this.props.state.get()].timerButtonText
 
             return (
                 <div id="timer-btn" className={this.props.state.get()} onTouchEnd={App.Timer.start} onTouchStart={this.onTouchStart} onTouchCancel={this.onTouchCancel}>
@@ -82,27 +100,39 @@ window.App = (function(){
     });
 
     var BottomHelp = React.createClass({
+        onTouchStart: function(){
+            App.Timer.setState(App.States.front);
+        },
         render: function() {
-            return (
-                <div className="bottom-help">slam top stop</div>
-            );
+            if(this.props.state.get() === App.States.end){
+                return (
+                    <div className="bottom-help"><button id="try-again-btn" onTouchStart={this.onTouchStart}>Try again</button></div>
+                );
+            }
+            else{
+                return (
+                    <div className="bottom-help">slam to stop</div>
+                );    
+            }
         }
     });
 
     var Counter = React.createClass({
         render: function() {
-            var val = this.props.time.get();
-            var time = {
-                seconds: (Math.floor(val/100) * 0.1).toFixed(0),
-                fractions: window.parseInt(val.toString().slice(-3), 10)/100
+            var time = this.props.time.get();
+            var progress = {
+                seconds: (Math.floor(time/100) * 0.1).toFixed(0),
+                fractions: window.parseInt(time.toString().slice(-3), 10)/100
             };
+
+            var progressText = pages[this.props.state.get()].progressText
 
             return (
                 <div id="counter">
-                    <div className="text">{'Ready when you are'}</div>
+                    <div className="text">{progressText}</div>
                     <div className="progress-seconds">
-                        {time.seconds}
-                        <div className="progress-fractions">{time.fractions}</div>
+                        {progress.seconds}
+                        <div className="progress-fractions">{progress.fractions}</div>
                     </div>
                 </div>
             );
@@ -112,29 +142,38 @@ window.App = (function(){
 
     var BeerApp = React.createClass({
         getInitialState: function(){
+            var self = this;
             return {
                 pages: {
-                    front: function(state){
+                    front: function(){
                         return (
                             <div>
                                 <Logo />
-                                <TimerButton state={state} />
+                                <TimerButton state={self.props.state} />
                             </div>
                         );
                     },
-                    ready: function(time, state){
+                    ready: function(){
                         return (
                             <div>
-                                <Counter time={time}/>
-                                <TimerButton state={state} />
+                                <Counter time={self.props.time} state={self.props.state}/>
+                                <TimerButton state={self.props.state} />
                             </div>
                         );
                     },
-                    progress: function(time, state){
+                    progress: function(){
                         return (
                             <div>
-                                <Counter time={time}/>
-                                <BottomHelp />
+                                <Counter time={self.props.time} state={self.props.state}/>
+                                <BottomHelp state={self.props.state}/>
+                            </div>
+                        );
+                    },
+                    end: function(){
+                        return (
+                            <div>
+                                <Counter time={self.props.time} state={self.props.state}/>
+                                <BottomHelp state={self.props.state}/>
                             </div>
                         );
                     }
@@ -144,36 +183,23 @@ window.App = (function(){
         },
 
         render: function() {
-            var pages = {};
+            pages[App.States.front].page = this.state.pages.front();
+            pages[App.States.ready].page = this.state.pages.ready();
+            pages[App.States.progress].page = this.state.pages.progress();
+            pages[App.States.end].page = this.state.pages.end();
 
-            pages[App.States.front] = {
-                page: this.state.pages.front(this.props.state),
-                color: "red"
-            };
-
-            pages[App.States.ready] = {
-                page: this.state.pages.ready(this.props.time, this.props.state),
-                color: "green"
-            };
-
-            pages[App.States.progress] = {
-                page: this.state.pages.progress(this.props.time, this.props.state),
-                color: "green"
-            };
-
-            var currentPage = pages[this.props.state.get()];
+            var currentPage = pages[this.props.state.get()] || {};
             
-            //console.log("currentPage:", currentPage, "color:", color);
+            //console.log("currentPage:", currentPage, this.props.state.get());
 
-            $('html').attr("data-bg-color", currentPage.color);
+            var currentColor = currentPage.color || "green";
+            $('html').attr("data-bg-color", currentColor);
 
             return (
                <div id="page">{currentPage.page}</div>
             );
         }
     });
-
-    
 
     App.Timer = {
         _intervalId: null,
@@ -209,10 +235,10 @@ window.App = (function(){
             console.log("timer: stop");
             window.clearInterval(this._intervalId);
 
-            this._stateModel.set(App.States.end);
+            App.Timer.setState(App.States.end);
 
             App.Accelerometer.stop();
-            App.Audio.stopRecording();   
+            App.Audio.stopRecording();
         },
 
         getElapsedModel: function(){

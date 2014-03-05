@@ -22,6 +22,10 @@ window.App.Utils = (function(){
             origConsoleLog.apply(console, arguments);
         };
     }
+
+    window.App.getTime = function(){
+        return new Date().getTime();
+    };
     
     return Utils;
 
