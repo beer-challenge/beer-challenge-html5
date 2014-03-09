@@ -18,8 +18,8 @@ App.Accelerometer = (function(){
 
     var handleMotionChange = function(event) {
         var x = event.accelerationIncludingGravity.x;
-        if(orientationHasChanged(x, prevMotionX, 0.4) && window.App.getTime() > (accelerometerStartTime + 1500) ){
-            hitStatus = window.App.getTime();
+        if(orientationHasChanged(x, prevMotionX, 0.4) && App.Utils.getTime() > (accelerometerStartTime + 1500) ){
+            hitStatus = App.Utils.getTime();
             //console.log("handleMotionChange, hitStatus:", hitStatus);
         }
 
@@ -29,20 +29,21 @@ App.Accelerometer = (function(){
     var handleOrientation = function(event) {
         deviceorientation = true;
 
-        if(orientationHasChanged(event.beta, prevMotionX, 0.15) && window.App.getTime() > (accelerometerStartTime + 1500)){
-            hitStatus = window.App.getTime();
-            console.log("handleOrientation, hitStatus:", hitStatus);
+        if(orientationHasChanged(event.beta, prevMotionX, App.Settings.accelerometerThreshold) && App.Utils.getTime() > (accelerometerStartTime + 1500)){
+            hitStatus = App.Utils.getTime();
+            //console.log("handleOrientation, hitStatus:", hitStatus);
         }
 
         prevMotionX = event.beta;
     };
 
-    var throttledHandleOrientation = _.throttle(handleOrientation, 10);
-    var throttledHandleMotion = _.throttle(handleMotionChange, 10);
+    var throttledHandleOrientation, throttledHandleMotion;
     
     Accelerometer.start = function(){
         hitStatus = false;
-        accelerometerStartTime = window.App.getTime();
+        throttledHandleOrientation = _.throttle(handleOrientation, 10);
+        throttledHandleMotion = _.throttle(handleMotionChange, 10);
+        accelerometerStartTime = App.Utils.getTime();
         console.log("Accelerometer start");
 
         window.addEventListener('deviceorientation', throttledHandleOrientation);

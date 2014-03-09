@@ -30,6 +30,8 @@ html {
   overflow: hidden;
 }
 body {
+  padding: 0;
+  margin: 0;
   text-align: center;
   background: transparent;
   -webkit-user-select: none;
@@ -67,6 +69,7 @@ html[data-bg-color="green"] {
   font-family: "BebasNeue";
 }
 #timer-btn {
+  display: none;
   position: absolute;
   bottom: 100px;
   cursor: pointer;
@@ -74,9 +77,9 @@ html[data-bg-color="green"] {
   margin: 0 -10px;
   -webkit-user-select: none;
 }
-#timer-btn * {
-  pointer-events: none;
-  -webkit-user-select: none;
+#timer-btn .timer-btn-container {
+  width: 300px;
+  display: inline-block;
 }
 #timer-btn .text-container {
   position: relative;
@@ -149,6 +152,9 @@ html[data-bg-color="green"] {
 #timer-btn .bg-hex .hex {
   background: #b02b2a;
 }
+#timer-btn.READY {
+  display: block;
+}
 #timer-btn.READY .hex {
   background: #26372c;
 }
@@ -157,6 +163,9 @@ html[data-bg-color="green"] {
 }
 #timer-btn.READY .text {
   color: #42604a;
+}
+#timer-btn.FRONT {
+  display: block;
 }
 #counter .text {
   text-transform: uppercase;
@@ -203,6 +212,72 @@ html[data-bg-color="green"] {
   color: #42604a;
   border: 0;
   border-radius: 10px;
+  margin-bottom: 50px;
+}
+#menu {
+  width: 100%;
+  position: absolute;
+  top: 0;
+  text-transform: capitalize;
+}
+#menu button {
+  float: left;
+  font-size: 90%;
+  padding: 5px;
+  background: #722425;
+  border: 0;
+  outline: none;
+  color: #fff;
+}
+#menu .content {
+  font-size: 150%;
+  background: #fff;
+  padding-top: 60px;
+  padding-left: 10px;
+  text-align: left;
+}
+#menu input {
+  margin-bottom: 20px;
+  font-size: 120%;
+}
+#menu span {
+  display: block;
+}
+#menu.visible-false .content {
+  display: none;
+}
+#menu.visible-true .content {
+  display: block;
+}
+#highscore {
+  text-align: center;
+  font-size: 170%;
+}
+#highscore .title {
+  margin: 0 auto;
+  width: 450px;
+  border-bottom: 2px solid;
+  font-size: 200%;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+#highscore .entry {
+  width: 50%;
+  display: inline-block;
+}
+#highscore .entry .place {
+  display: inline-block;
+  width: 50px;
+  text-align: left;
+}
+#highscore .entry .name {
+  display: inline-block;
+  width: 100px;
+}
+#highscore .entry .time {
+  display: inline-block;
+  width: 100px;
 }
 .display-none {
   display: none;

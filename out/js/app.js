@@ -11,34 +11,11 @@ window.App = (function(){
         end: "END"
     };
 
-    var pages = {};
-
-    pages[App.States.front] = {
-        color: "red",
-        timerButtonText: "tap & hold"
+    App.Settings = {
+        audioThreshold: 0.2,
+        diff: 250,
+        accelerometerThreshold: 0.15
     };
-
-    pages[App.States.ready] = {
-        color: "green",
-        timerButtonText: "release now",
-        progressText: "ready when you are"
-    };
-
-    pages[App.States.progress] = {
-        color: "green",
-        progressText: "Go!"
-    };
-
-    pages[App.States.end] = {
-        color: "green"
-    };
-
-    function render() {
-        React.renderComponent(
-            BeerApp( {time:App.Timer.getElapsedModel(), state:App.Timer.getStateModel()}),
-            document.getElementById('app')
-        );
-    }
 
     $(window).keyup(function(event){
         var charTyped = String.fromCharCode(event.keyCode);
@@ -51,156 +28,7 @@ window.App = (function(){
         //console.log("e", event, charTyped);
     });
 
-    var TimerButton = React.createClass({displayName: 'TimerButton',
-        onTouchStart: function(event){
-            App.Timer.setState(App.States.ready);
-        },
-
-        onTouchCancel: function(event){
-            console.log("touch cancel");
-            App.Timer.setState(App.States.front);
-        },
-
-        render: function() {
-            var buttonText = pages[this.props.state.get()].timerButtonText
-
-            return (
-                React.DOM.div( {id:"timer-btn", className:this.props.state.get(), onTouchEnd:App.Timer.start, onTouchStart:this.onTouchStart, onTouchCancel:this.onTouchCancel}, 
-                    React.DOM.div( {className:"text-container"}, 
-                      React.DOM.div( {className:"text"}, buttonText)
-                    ),
-                
-                    React.DOM.div( {className:"bg-hex hexagon"}, 
-                      React.DOM.div( {className:"hex"},    
-                        React.DOM.div( {className:"corner-1"}),
-                        React.DOM.div( {className:"corner-2"})    
-                      )
-                    ),
-
-                    React.DOM.div( {className:"front-hex hexagon"}, 
-                      React.DOM.div( {className:"hex"},    
-                        React.DOM.div( {className:"corner-1"}),
-                        React.DOM.div( {className:"corner-2"})    
-                      )
-                    )
-                )
-            );
-        }
-    });
-
-    var Logo = React.createClass({displayName: 'Logo',
-        render: function() {
-            return (
-                React.DOM.div( {className:"logo"}, 
-                    React.DOM.div( {className:"top"}, "The"),
-                    React.DOM.div( {className:"middle"}, "Beer"),
-                    React.DOM.div( {className:"bottom"}, "Challenge")
-                )
-            );
-        }
-    });
-
-    var BottomHelp = React.createClass({displayName: 'BottomHelp',
-        onTouchStart: function(){
-            App.Timer.setState(App.States.front);
-        },
-        render: function() {
-            if(this.props.state.get() === App.States.end){
-                return (
-                    React.DOM.div( {className:"bottom-help"}, React.DOM.button( {id:"try-again-btn", onTouchStart:this.onTouchStart}, "Try again"))
-                );
-            }
-            else{
-                return (
-                    React.DOM.div( {className:"bottom-help"}, "slam to stop")
-                );    
-            }
-        }
-    });
-
-    var Counter = React.createClass({displayName: 'Counter',
-        render: function() {
-            var time = this.props.time.get();
-            var progress = {
-                seconds: (Math.floor(time/100) * 0.1).toFixed(0),
-                fractions: window.parseInt(time.toString().slice(-3), 10)/100
-            };
-
-            var progressText = pages[this.props.state.get()].progressText
-
-            return (
-                React.DOM.div( {id:"counter"}, 
-                    React.DOM.div( {className:"text"}, progressText),
-                    React.DOM.div( {className:"progress-seconds"}, 
-                        progress.seconds,
-                        React.DOM.div( {className:"progress-fractions"}, progress.fractions)
-                    )
-                )
-            );
-        }
-    });
-
-
-    var BeerApp = React.createClass({displayName: 'BeerApp',
-        getInitialState: function(){
-            var self = this;
-            return {
-                pages: {
-                    front: function(){
-                        return (
-                            React.DOM.div(null, 
-                                Logo(null ),
-                                TimerButton( {state:self.props.state} )
-                            )
-                        );
-                    },
-                    ready: function(){
-                        return (
-                            React.DOM.div(null, 
-                                Counter( {time:self.props.time, state:self.props.state}),
-                                TimerButton( {state:self.props.state} )
-                            )
-                        );
-                    },
-                    progress: function(){
-                        return (
-                            React.DOM.div(null, 
-                                Counter( {time:self.props.time, state:self.props.state}),
-                                BottomHelp( {state:self.props.state})
-                            )
-                        );
-                    },
-                    end: function(){
-                        return (
-                            React.DOM.div(null, 
-                                Counter( {time:self.props.time, state:self.props.state}),
-                                BottomHelp( {state:self.props.state})
-                            )
-                        );
-                    }
-                },
-                running: false
-            }
-        },
-
-        render: function() {
-            pages[App.States.front].page = this.state.pages.front();
-            pages[App.States.ready].page = this.state.pages.ready();
-            pages[App.States.progress].page = this.state.pages.progress();
-            pages[App.States.end].page = this.state.pages.end();
-
-            var currentPage = pages[this.props.state.get()] || {};
-            
-            //console.log("currentPage:", currentPage, this.props.state.get());
-
-            var currentColor = currentPage.color || "green";
-            $('html').attr("data-bg-color", currentColor);
-
-            return (
-               React.DOM.div( {id:"page"}, currentPage.page)
-            );
-        }
-    });
+    React.initializeTouchEvents(true);
 
     App.Timer = {
         _intervalId: null,
@@ -211,12 +39,12 @@ window.App = (function(){
             console.log("App.Timer init");
             this._elapsedModel.set(0);
             this._stateModel.set(App.States.front);
-            render();
+            App.render();
         },
 
         updateModel: function(){
             this._elapsedModel.set(this._elapsedModel.get() + 100);
-            render();
+            App.render();
         },
 
         start: function(){
@@ -240,6 +68,11 @@ window.App = (function(){
 
             App.Accelerometer.stop();
             App.Audio.stopRecording();
+
+            $.post("http://www.beer-challenge.com/highscores", function(data){
+                console.log("data", data);
+            });
+
         },
 
         getElapsedModel: function(){
@@ -253,11 +86,10 @@ window.App = (function(){
         setState: function(state){
             console.log("setState:", state);
             this._stateModel.set(state);
-            render();
+            App.render();
         }
     };
     _.bindAll(App.Timer);
-    App.Timer.init();
 
     return App;
 }).call(this);

@@ -59,9 +59,10 @@ App.Audio = (function(){
 
         normLevel = (aveLevel / 256) * volSens; //256 is the highest a freq data can be
 
-        var now = window.App.getTime();
+        var now = App.Utils.getTime();
         var diff = now - App.Accelerometer.status();
-        if(normLevel > 0.2 && diff < 250){
+        console.log("audio", normLevel, "diff:", diff);
+        if(normLevel > App.Settings.audioThreshold && diff < App.Settings.diff){
             console.log("audio", normLevel, "diff:", diff);
             App.Timer.stop();
         }
